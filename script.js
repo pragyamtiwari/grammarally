@@ -1,7 +1,37 @@
-let timerDuration = 15; // Default timer duration
+let timerDuration = 15;
+let prevVal = 15; 
+
 let playedBefore = false;
 
-let prevVal = 15; // Initialize prevVal with default timerDuration
+let bestScore = localStorage.getItem('bestScore') ? parseInt(localStorage.getItem('bestScore'), 10) : 0;
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    function checkScreenWidth() {
+        if (window.innerWidth < 500) {
+            document.getElementById('overlay').style.display = 'flex';
+        } else {
+            document.getElementById('overlay').style.display = 'none';
+        }
+    }
+
+    // Check screen width on page load
+    checkScreenWidth();
+
+    // Check screen width on resize
+    window.addEventListener('resize', checkScreenWidth);
+
+    // Add event listener for proceed button
+    document.getElementById('proceed-button').addEventListener('click', function() {
+        document.getElementById('overlay').style.display = 'none';
+        // Optionally, display the hidden elements
+        document.querySelectorAll('.banner, .card, .button-container, #timer-modal, #rules-container, #game-container, #result-container').forEach(function(element) {
+            element.style.display = 'block';
+        });
+    });
+});
+
 
 document.addEventListener("DOMContentLoaded", function () {
     const settingsButton = document.getElementById("settings-button");
@@ -41,7 +71,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Other game functions should remain the same but utilize the updated timer logic
 });
 
-
+document.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter' && document.getElementById('start-button').style.display !== 'hidden') {
+        document.getElementById('start-button').click();
+    }
+});
 
 
     
@@ -53,12 +87,24 @@ const startButton = document.getElementById('start-button');
 const settingsButton = document.getElementById('settings-button');
 
 
+
+
 // Get the audio element
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Swap
+    }
+    return array;
+}
 
 // Function to start the game and play the music
 function startGame() {
     // Play the music
-    
+    shuffleArray(questions); // Shuffle questions when the game starts
+    document.getElementById('rules-container').style.display = 'block'; // Show the rules
+
     // Start the game (your game start logic here)
 }
 
@@ -129,36 +175,190 @@ document.addEventListener('keypress', function(event) {
 });
 
 
+
+
+
 // JavaScript to handle the grammar game logic
 
-// Questions array with wrong sentences, their correct versions, and explanations
 const questions = [
-    { 
-        wrong: "She don't like apples.", 
-        correct: "She doesn't like apples.", 
-        explanation: "Use 'doesn't' instead of 'don't' for third person singular subjects." 
+    {
+        wrong: "Him plays soccer every weekend.",
+        correct: ["He plays soccer every weekend.", "He plays football every weekend."],
+        explanation: "Use the subject pronoun 'He' instead of 'Him'."
     },
-    { 
-        wrong: "He go to school everyday.", 
-        correct: "He goes to school every day.", 
-        explanation: "Use 'goes' instead of 'go' for third person singular subjects. 'Every day' as two words means each day." 
+    {
+        wrong: "She goed to the store.",
+        correct: ["She went to the store.", "She has gone to the store."],
+        explanation: "'Goed' is incorrect; the past tense of 'go' is 'went'."
     },
-    { 
-        wrong: "They was playing soccer.", 
-        correct: "They were playing soccer.", 
-        explanation: "Use 'were' instead of 'was' with the plural subject 'they'." 
+    {
+        wrong: "There is many people here.",
+        correct: ["There are many people here.", "There are a lot of people here."],
+        explanation: "Use 'are' instead of 'is' with plural nouns like 'people'."
     },
-    { 
-        wrong: "The childs are happy.", 
-        correct: "The children are happy.", 
-        explanation: "'Childs' is incorrect; the plural of 'child' is 'children'." 
+    {
+        wrong: "He don't need no help.",
+        correct: ["He doesn't need any help.", "He doesn’t need help.", "He needs no help."],
+        explanation: "Use 'doesn't' instead of 'don't' for third person singular, and avoid double negatives."
     },
-    { 
-        wrong: "She have a new car.", 
-        correct: "She has a new car.", 
-        explanation: "Use 'has' instead of 'have' for third person singular subjects." 
+    {
+        wrong: "She has less books than I do.",
+        correct: ["She has fewer books than I do.", "She has fewer books than me."],
+        explanation: "Use 'fewer' with countable nouns like 'books'."
+    },
+    {
+        wrong: "Their going to visit us.",
+        correct: ["They're going to visit us.", "They are going to visit us."],
+        explanation: "Use 'They're' (they are) instead of 'Their'."
+    },
+    {
+        wrong: "The car need washed.",
+        correct: ["The car needs washing.", "The car needs to be washed."],
+        explanation: "Use 'needs washing' instead of 'need washed'."
+    },
+    {
+        wrong: "Me and her went to the mall.",
+        correct: ["She and I went to the mall.", "I and she went to the mall."],
+        explanation: "Use the subject pronouns 'She' and 'I' when they are the subject of the sentence."
+    },
+    {
+        wrong: "It's a long ways to go.",
+        correct: ["It's a long way to go.", "It’s a long way to go."],
+        explanation: "'Ways' is incorrect; use 'way' in this context."
+    },
+    {
+        wrong: "He gave it to I.",
+        correct: ["He gave it to me.", "He handed it to me."],
+        explanation: "Use the object pronoun 'me' instead of 'I' after a preposition."
+    },
+    {
+        wrong: "The team are winning.",
+        correct: ["The team is winning.", "The team’s winning."],
+        explanation: "Use 'is' instead of 'are' with collective nouns like 'team'."
+    },
+    {
+        wrong: "She didn't told me.",
+        correct: ["She didn't tell me.", "She did not tell me."],
+        explanation: "Use the base form of the verb 'tell' after 'didn't'."
+    },
+    {
+        wrong: "The bag of apples are on the table.",
+        correct: ["The bag of apples is on the table.", "The apples are in the bag on the table."],
+        explanation: "Use 'is' instead of 'are' as the subject 'bag' is singular."
+    },
+    {
+        wrong: "We was at the movies.",
+        correct: ["We were at the movies.", "We were at the cinema."],
+        explanation: "Use 'were' instead of 'was' with the plural subject 'we'."
+    },
+    {
+        wrong: "Him and her are dancing.",
+        correct: ["He and she are dancing.", "She and he are dancing."],
+        explanation: "Use the subject pronouns 'He' and 'She' when they are the subject of the sentence."
+    },
+    {
+        wrong: "She sings good.",
+        correct: ["She sings well.", "She sings beautifully."],
+        explanation: "Use 'well' instead of 'good' as an adverb to describe how she sings."
+    },
+    {
+        wrong: "He gots a new car.",
+        correct: ["He got a new car.", "He bought a new car."],
+        explanation: "'Gots' is incorrect; the past tense of 'get' is 'got'."
+    },
+    {
+        wrong: "She drawed a picture.",
+        correct: ["She drew a picture.", "She has drawn a picture."],
+        explanation: "'Drawed' is incorrect; the past tense of 'draw' is 'drew'."
+    },
+    {
+        wrong: "There is a lot of peoples here.",
+        correct: ["There are a lot of people here.", "There are many people here."],
+        explanation: "Use 'people' instead of 'peoples', and 'are' instead of 'is' with plural nouns."
+    },
+    {
+        wrong: "They has finished the project.",
+        correct: ["They have finished the project.", "They’ve completed the project."],
+        explanation: "Use 'have' instead of 'has' with plural subjects like 'they'."
+    },
+    {
+        wrong: "I seen him at the store.",
+        correct: ["I saw him at the store.", "I have seen him at the store."],
+        explanation: "Use 'saw' instead of 'seen' as the past tense of 'see'."
+    },
+    {
+        wrong: "She was more prettier than her sister.",
+        correct: ["She was prettier than her sister.", "She was more attractive than her sister."],
+        explanation: "Avoid using 'more' with comparative adjectives like 'prettier'."
+    },
+    {
+        wrong: "He don't know nothing.",
+        correct: ["He doesn't know anything.", "He knows nothing."],
+        explanation: "Use 'doesn't' instead of 'don't' for third person singular, and avoid double negatives."
+    },
+    {
+        wrong: "I didn't saw the movie.",
+        correct: ["I didn't see the movie.", "I did not see the movie."],
+        explanation: "Use the base form 'see' after 'didn't'."
+    },
+    {
+        wrong: "Her is going to the party.",
+        correct: ["She is going to the party.", "She’s going to the party."],
+        explanation: "Use the subject pronoun 'She' instead of 'Her'."
+    },
+    {
+        wrong: "We didn't did it.",
+        correct: ["We didn't do it.", "We did not do it."],
+        explanation: "Use the base form 'do' after 'didn't'."
+    },
+    {
+        wrong: "They was talking loudly.",
+        correct: ["They were talking loudly.", "They talked loudly."],
+        explanation: "Use 'were' instead of 'was' with the plural subject 'they'."
+    },
+    {
+        wrong: "Him don't likes pizza.",
+        correct: ["He doesn't like pizza.", "He dislikes pizza."],
+        explanation: "Use 'He' instead of 'Him' as the subject and 'doesn't like' instead of 'don't likes'."
+    },
+    {
+        wrong: "He is more stronger than me.",
+        correct: ["He is stronger than me.", "He is much stronger than me."],
+        explanation: "Avoid using 'more' with comparative adjectives like 'stronger'."
+    },
+    {
+        wrong: "The datas are incorrect.",
+        correct: ["The data is incorrect.", "The information is incorrect."],
+        explanation: "Use 'is' with 'data' as it is usually treated as an uncountable noun."
+    },
+    {
+        wrong: "She didn't knew the answer.",
+        correct: ["She didn't know the answer.", "She did not know the answer."],
+        explanation: "Use the base form 'know' after 'didn't'."
+    },
+    {
+        wrong: "Me and him went to the concert.",
+        correct: ["He and I went to the concert.", "I and he went to the concert."],
+        explanation: "Use the subject pronouns 'He' and 'I' when they are the subject of the sentence."
+    },
+    {
+        wrong: "There is less cars on the road.",
+        correct: ["There are fewer cars on the road.", "Fewer cars are on the road."],
+        explanation: "Use 'fewer' with countable nouns like 'cars'."
+    },
+    {
+        wrong: "The childrens are playing outside.",
+        correct: ["The children are playing outside.", "The kids are playing outside."],
+        explanation: "'Childrens' is incorrect; the plural of 'child' is 'children'."
+    },
+    {
+        wrong: "She taked the test yesterday.",
+        correct: ["She took the test yesterday.", "She has taken the test yesterday."],
+        explanation: "'Taked' is incorrect; the past tense of 'take' is 'took'."
     }
+    // Add more questions as needed...
 ];
+
 
 let currentQuestionIndex = 0;
 let score = 0; // Initialize the score
@@ -171,6 +371,8 @@ let musicPlaying = true; // Track if the music is playing
 // Function to show the question and focus on the answer input
 // Function to show the question image and focus on the answer input
 function showQuestion() {
+    clearInterval(timer); // Stop any previous timers
+    
     const questionContainer = document.getElementById('question-container');
     const questionText = document.getElementById('question-text');
     const answerInput = document.getElementById('answer-input'); // Reference to the input field
@@ -198,10 +400,12 @@ function handleAnswer() {
 
     clearInterval(timer); // Stop the timer when the answer is submitted
 
-    if (userAnswer === currentQuestion.correct) {
+    if (currentQuestion.correct.includes(userAnswer)) {
+
         score++; // Increase the score for a correct answer
         currentQuestionIndex++;
         if (currentQuestionIndex < questions.length) {
+            clearInterval(timer);
             showQuestion();
             document.getElementById('answer-input').value = ""; // Clear input
         } else {
@@ -222,7 +426,10 @@ document.getElementById('answer-input').addEventListener('keypress', function(ev
 
 let resultScreenActive = false; // Flag to track if result screen is active
 
+
+
 function showLossScreen(correctAnswer, explanation) {
+
     prevVal = timerDuration; // Preserve timer value for next round
     playedBefore = true; 
 
@@ -236,13 +443,22 @@ function showLossScreen(correctAnswer, explanation) {
     document.getElementById('result-message').textContent = "Game Over!";
     document.getElementById('score').textContent = `Your score was ${score}.`;
 
+    if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('bestScore', bestScore);  // Save the new best score to localStorage
+    }
+    
+    document.getElementById('best-score').textContent = `Your best score is ${bestScore}.`;
+    
+
+    document.getElementById('best-score').textContent = `Your best score is ${bestScore}.`
     document.getElementById('question').textContent = `The question was: "${questions[currentQuestionIndex].wrong}"`;
     document.getElementById('user-answer').textContent = `Your answer was: "${document.getElementById('answer-input').value.trim()}"`;
     document.getElementById('correct-answer').textContent = `The correct answer was: "${correctAnswer}".`;
     document.getElementById('explanation').textContent = `Explanation: ${explanation}`;
 
     resultScreenActive = true; 
-    setTimeout(() => resultScreenActive = false, 1000);
+    setTimeout(() => resultScreenActive = false, 50);
 }
 
 
@@ -304,5 +520,5 @@ document.getElementById('home-button').addEventListener('click', function() {
 document.getElementById('continue-button').addEventListener('click', function() {
     document.getElementById('rules-container').style.display = 'none';
     document.getElementById('game-container').style.display = 'block';
-    showQuestion();
+    showQuestion(); // Show the first question after shuffling
 });
