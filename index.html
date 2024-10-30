@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grammar Game</title>
+    <title>GrammarAlly</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="/images/galogo.png">
 </head>
 <body>
+    <div id="overlay" class="overlay">
+        <div class="overlay-content">
+            <p>This game does not work on mobile devices.</p>
+            <button id="proceed-button">Proceed Anyway</button>
+        </div>
+    </div>
+
     <div class="banner">
         <img src="images/lights.png" alt="UI options" class="lights" draggable="false">
         <div class="time-battery-container">
@@ -40,7 +48,7 @@
             <p>The sentence must have the same meaning.</p>
             <p>There may be multiple correct answers.</p>
             <p>Press the Enter Key submit your answers.</p>
-            <p>Press the Enter Key now to proceed.</p>
+            <p>Press the <mobile>Enter</mobile> Key now to proceed.</p>
             <button id="continue-button"></button>
         </div>
     </div>
@@ -74,11 +82,12 @@
         <div class="white-box">
             <h2 id="result-message">Game Over!</h2> <!-- Loss message -->
             <p id="score"></p>
+            <p id="best-score"></p>
             <p id="question"></p>
             <p id="user-answer"></p>
             <p id="correct-answer"></p>
             <p id="explanation"></p>
-            <p id="restart-message">Press Enter to start again</p>
+            <p id="restart-message">Press <mobile>Enter</mobile> to start again</p>
         </div>
     </div>
 
